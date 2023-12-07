@@ -8,6 +8,7 @@ class FuelTank:
         self.TotalVolume = self.tank_volume()
         self.material = material
         self.YoungsModulus = self.get_youngs_modulus()
+        self.YieldStress = self.get_yield_stress()
 
     def tank_volume(self):
         volume_cylinder = 3.14159 * self.radius ** 2 * self.length
@@ -20,6 +21,12 @@ class FuelTank:
                 YoungsModulus = element["Elastic Modulus"]
                 break
         return YoungsModulus
+    def get_yield_stress(self):
+        for element in InputVariables.TankMaterial:
+            if element["material"] == self.material:
+                yield_stress = element["yield_stress"]
+                break
+        return yield_stress
 
 
 fuel_tank = FuelTank(length=1, radius=1, t_1=3, t_2=4, material="Aluminium 7075")
