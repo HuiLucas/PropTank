@@ -9,6 +9,7 @@ class FuelTank:
         self.material = material
         self.YoungsModulus = self.get_youngs_modulus()
         self.YieldStress = self.get_yield_stress()
+        self.PoissonRatio = self.get_poisson_ratio()
 
     def tank_volume(self):
         volume_cylinder = 3.14159 * self.radius ** 2 * self.length
@@ -27,9 +28,20 @@ class FuelTank:
                 yield_stress = element["yield_stress"]
                 break
         return yield_stress
+    def get_poisson_ratio(self):
+        for element in InputVariables.TankMaterial:
+            if element["material"] == self.material:
+                poisson_ratio = element["poisson_ratio"]
+                break
+        return poisson_ratio
 
 
 fuel_tank = FuelTank(length=1, radius=1, t_1=3, t_2=4, material="Aluminium 7075")
 print(f"Total volume of the fuel tank: {fuel_tank.TotalVolume}")
 print(f"Material stiffness of fuel tank: {fuel_tank.YoungsModulus} in GPa ")
 print(f"Material of fuel tank: {fuel_tank.material}")
+
+class Loads:
+    def __init__(self,pressure):
+        self.pressure = pressure
+
