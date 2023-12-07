@@ -16,9 +16,9 @@ TankMaterial = [
     {'material': '2024-T4', 'thermal_expansion_coefficient': 23.2, 'Elastic Modulus': 73.1, 'yield_stress': 260},
     {'material': '356-T6 Aluminium', 'thermal_expansion_coefficient': 23.8, 'Elastic Modulus': 72.4, 'yield_stress': 152},
     {'material': '2024-T3', 'thermal_expansion_coefficient': 21.6, 'Elastic Modulus': 73.1, 'yield_stress': 275},
-    {'material': 'Ti-6AI-4V', 'Elastic Modulus': 113.8, 'yield_stress': 970, 'density': 4.43},
-    {'material': 'Al-Li 2195', 'Elastic Modulus': 69, 'yield_stress': 560, 'density': 2.71},
-    {'material': 'S2-glass/epoxy', 'Elastic Modulus': 86.9, 'yield_stress': 4890, 'density': 2.46}
+    {'material': 'Ti-6AI-4V', 'Elastic Modulus': 113.8, 'yield_stress': 970, 'density': 4.43, 'poisson_ratio': 0.34},
+    {'material': 'Al-Li 2195', 'Elastic Modulus': 69, 'yield_stress': 560, 'density': 2.71, 'poisson_ration': 0.33},
+    {'material': 'S2-glass/epoxy', 'Elastic Modulus': 86.9, 'yield_stress': 4890, 'density': 2.46, 'poisson_ratio': 0.23}
 
                 ]
 
