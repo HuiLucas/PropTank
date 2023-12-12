@@ -17,7 +17,7 @@ def constraint_equation_state(volume_liquid,temperature,Loads):
     n = InputVariables.n
     return gas_const * temperature / ( volume_liquid / n - b ) - a * alpha / ( (volume_liquid / n) ** 2 + 2 * b * volume_liquid / n - b ** 2 ) - Loads.pressure
 
-def constraint_shell_buckling(TankClass,Loads):
+def constraint_shell_buckling(TankClass, Loads):
     #  launch load - pressure_longitudinal < critical stress from shell buckling
     return sb.calculate_shell_buckling(TankClass,Loads)
 
@@ -28,13 +28,21 @@ def constraint_column_buckling(TankClass,Loads):
 def constraint_volume(TankClass,volume_liquid):
     volume_tank = TankClass.TotalVolume
     return volume_tank - volume_liquid
+def constraint_temp_upper(temperature):
+    # temperature < 25
+    return temperature - 25
+def constraint_temp_lower(temperature):
+    # -10 < temperature
+    return -10 - temperature
+
 
 
 constraints = [
     {'type': 'eq', 'fun': constraint_equation_state},
     {'type': 'ineq', 'fun': constraint_shell_buckling},
     {'type': 'ineq', 'fun': constraint_column_buckling},
-    {'type': 'eq', 'fun': constraint_volume},
+    {'type': 'ineq', 'fun': constraint_temp_lower},
+    {'type': 'ineq', 'fun': constraint_temp_upper},
 ]
 
 
