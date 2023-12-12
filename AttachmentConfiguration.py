@@ -3,7 +3,7 @@
 CompressiveLoad = #calculated
 NBeams = 8
 ActualLoad = CompressiveLoad/NBeams
-MassTwoPreviousLugs = 79.05 * 10^(-3)
+MassTwoPreviousLugs = 79.05 * 10**(-3)
 
 
 #trade_off
