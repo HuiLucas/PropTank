@@ -51,5 +51,6 @@ print(f"Material stiffness of fuel tank: {fuel_tank.YoungsModulus} in GPa ")
 print(f"Material of fuel tank: {fuel_tank.material}")
 
 class Loads:
-    def __init__(self,pressure):
+    def __init__(self,pressure,launc_axial_loads:
         self.pressure = pressure
+        self.launch_axial_load
