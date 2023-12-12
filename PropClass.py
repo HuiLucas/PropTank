@@ -12,8 +12,8 @@ class FuelTank:
         self.PoissonRatio = self.get_poisson_ratio()
 
     def tank_volume(self):
-        volume_cylinder = 3.14159 * self.radius ** 2 * self.length
-        volume_caps =  4/3 * 3.14159 * self.radius ** 3
+        volume_cylinder = 3.14159 * self.radius ** 2 * (self.length - 2*self.radius)
+        volume_caps = 4/3 * 3.14159 * self.radius ** 3
         total_volume = volume_cylinder + volume_caps
         return total_volume
     def get_youngs_modulus(self):

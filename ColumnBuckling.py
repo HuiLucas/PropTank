@@ -12,8 +12,14 @@ def buckling_stress_check(FuelTank):
     else:
         return "Column Buckling", True, f"The critical stress is {CriticalStress / 10 ** 6} MPa"
 
-debug_fuel_tank = PropClass.FuelTank(length=2, radius=1, t_1 = 1 * 10 ** -3, t_2=4, material="Aluminium 7075")
+debug_fuel_tank = PropClass.FuelTank(length=20, radius=1, t_1 = 1 * 10 ** -3, t_2=4, material='Ti-6AI-4V')
+i = 0
+while not buckling_stress_check(debug_fuel_tank)[1]:
+    debug_fuel_tank = PropClass.FuelTank(length=(1 + i), radius=1, t_1=1 * 10 ** -3, t_2=4, material='Ti-6AI-4V')
+    i += 1
+    print(buckling_ stress_check(debug_fuel_tank))
+    print(debug_fuel_tank.length)
 
-print(buckling_stress_check(debug_fuel_tank))
+
 
 
