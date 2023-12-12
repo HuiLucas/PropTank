@@ -34,3 +34,6 @@ def get_alpha(T):
 molar_mass = chemicals.identifiers.MW("60-34-4")
 m = 97.57 #kg
 n = m / molar_mass
+
+total_mass_sc = 854.964 #kg
+
