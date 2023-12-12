@@ -43,13 +43,6 @@ class FuelTank:
                 break
         return density
 
-
-
-fuel_tank = FuelTank(length=1, radius=1, t_1=3, t_2=4, material="Aluminium 7075")
-print(f"Total volume of the fuel tank: {fuel_tank.TotalVolume}")
-print(f"Material stiffness of fuel tank: {fuel_tank.YoungsModulus} in GPa ")
-print(f"Material of fuel tank: {fuel_tank.material}")
-
 class Loads:
     def __init__(self,pressure,launch_axial_loads):
         self.pressure = pressure
