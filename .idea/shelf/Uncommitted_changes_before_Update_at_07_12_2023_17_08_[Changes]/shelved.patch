@@ -1,0 +1,83 @@
+Index: ShellBuckling.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ShellBuckling.py b/ShellBuckling.py
+--- a/ShellBuckling.py	(revision 2ef190daf5c0c3ad01021e59331fe24897cd6939)
++++ b/ShellBuckling.py	(date 1701965250185)
+@@ -1,2 +1,14 @@
++import numpy as np
++def calculate_k(n)
++    return n**2 + 1/n
+ 
++def check_shell_buckling(FuelTank)
++    MinLambda = np.sqrt((12/np.pi ** 4) * (FuelTank.length ** 4 / (FuelTank.radius ** 2 * FuelTank.t_1 ** 2)) * (1 - FuelTank.poisson_ratio ** 2))
++    MinK = 2 * MinLambda
++    queue = (pressure / (FuelTank.YoungsModulus * 10 ** 9)) * (FuelTank.radius/FuelTank.t_1) ** 2
++    CriticalStress = (1.983-0.983 * np.exp(-23.14 * queue) * MinK * ((np.pi ** 2 * FuelTank.YoungsModulus))
++    if CriticalStress  > FuelTank.YieldStress * 10 ** 6:
++        return True , CriticalStress / 10 ** 6
++    else:
++        return False , CriticalStress / 10 ** 6
+ 
+Index: InputVariables.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>TankMaterial = [\r\n    {'material': '316 Stainless Steel', 'Elastic Modulus': 190, 'density': 8070, 'thermal_expansion_coefficient': 18, 'ultimate_tensile_strength': 620, 'yield_stress': 170, 'resistance_factors': 'Excellent'},\r\n    {'material': '18-8 SS', 'Elastic Modulus': 193, 'density': 7930, 'thermal_expansion_coefficient': 17.8, 'ultimate_tensile_strength': 620, 'yield_stress': 310, 'resistance_factors': 'Respectable but not for salty environments'},\r\n    {'material': 'Carbon Steel', 'Elastic Modulus': 200, 'density': 7870, 'thermal_expansion_coefficient': 11.5, 'ultimate_tensile_strength': 540, 'yield_stress': 415, 'resistance_factors': 'Excellent'},\r\n    {'material': 'Titanium (Grade 5)', 'Elastic Modulus': 113.8, 'density': 4430, 'thermal_expansion_coefficient': 8.6, 'ultimate_tensile_strength': 950, 'yield_stress': 880, 'resistance_factors': 'Excellent for corrosion but poor with wear'},\r\n    {'material': 'Brass (Yellow)', 'Elastic Modulus': 76, 'density': 8740, 'thermal_expansion_coefficient': 21, 'ultimate_tensile_strength': 260, 'yield_stress': 90, 'resistance_factors': 'Good corrosion resistance'},\r\n    {'material': 'Aluminium 7075', 'Elastic Modulus': 71.7, 'density': 2810, 'thermal_expansion_coefficient': 25.2, 'ultimate_tensile_strength': 572, 'yield_stress': 503, 'resistance_factors': 'Moderate'},\r\n    {'material': '2014-T6(DF-L)', 'thermal_expansion_coefficient': 23, 'Elastic Modulus': 73.1 , 'yield_stress': 440  },\r\n    {'material': '2014-T6(DF-LT)', 'thermal_expansion_coefficient': 23, 'Elastic Modulus': 73.1 ,'yield_stress': 440 },\r\n    {'material': '2014-T6(P)', 'thermal_expansion_coefficient': 23, 'Elastic Modulus': 73.1 , 'yield_stress': 440},\r\n    {'material': '7075-T6(P)', 'thermal_expansion_coefficient': 23.4, 'Elastic Modulus': 71.7, 'yield_stress': 462},\r\n    {'material': '7075-T6(DF-L)', 'thermal_expansion_coefficient': 23.4, 'Elastic Modulus': 71.7, 'yield_stress': 462},\r\n    {'material': '7075-T6(DF-LT)', 'thermal_expansion_coefficient': 23.4, 'Elastic Modulus': 71.7, 'yield_stress': 462},\r\n    {'material': '4130 Steel', 'thermal_expansion_coefficient': 11.1, 'Elastic Modulus': 205, 'yield_stress': 1110},\r\n    {'material': '8630 Steel', 'thermal_expansion_coefficient': 11.3, 'Elastic Modulus': 200, 'yield_stress': 550},\r\n    {'material': '2024-T4', 'thermal_expansion_coefficient': 23.2, 'Elastic Modulus': 73.1, 'yield_stress': 260},\r\n    {'material': '356-T6 Aluminium', 'thermal_expansion_coefficient': 23.8, 'Elastic Modulus': 72.4, 'yield_stress': 152},\r\n    {'material': '2024-T3', 'thermal_expansion_coefficient': 21.6, 'Elastic Modulus': 73.1, 'yield_stress': 275}\r\n                ]\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/InputVariables.py b/InputVariables.py
+--- a/InputVariables.py	(revision 2ef190daf5c0c3ad01021e59331fe24897cd6939)
++++ b/InputVariables.py	(date 1701964400688)
+@@ -5,12 +5,8 @@
+     {'material': 'Titanium (Grade 5)', 'Elastic Modulus': 113.8, 'density': 4430, 'thermal_expansion_coefficient': 8.6, 'ultimate_tensile_strength': 950, 'yield_stress': 880, 'resistance_factors': 'Excellent for corrosion but poor with wear'},
+     {'material': 'Brass (Yellow)', 'Elastic Modulus': 76, 'density': 8740, 'thermal_expansion_coefficient': 21, 'ultimate_tensile_strength': 260, 'yield_stress': 90, 'resistance_factors': 'Good corrosion resistance'},
+     {'material': 'Aluminium 7075', 'Elastic Modulus': 71.7, 'density': 2810, 'thermal_expansion_coefficient': 25.2, 'ultimate_tensile_strength': 572, 'yield_stress': 503, 'resistance_factors': 'Moderate'},
+-    {'material': '2014-T6(DF-L)', 'thermal_expansion_coefficient': 23, 'Elastic Modulus': 73.1 , 'yield_stress': 440  },
+-    {'material': '2014-T6(DF-LT)', 'thermal_expansion_coefficient': 23, 'Elastic Modulus': 73.1 ,'yield_stress': 440 },
+-    {'material': '2014-T6(P)', 'thermal_expansion_coefficient': 23, 'Elastic Modulus': 73.1 , 'yield_stress': 440},
+-    {'material': '7075-T6(P)', 'thermal_expansion_coefficient': 23.4, 'Elastic Modulus': 71.7, 'yield_stress': 462},
+-    {'material': '7075-T6(DF-L)', 'thermal_expansion_coefficient': 23.4, 'Elastic Modulus': 71.7, 'yield_stress': 462},
+-    {'material': '7075-T6(DF-LT)', 'thermal_expansion_coefficient': 23.4, 'Elastic Modulus': 71.7, 'yield_stress': 462},
++    {'material': '2014-T6', 'thermal_expansion_coefficient': 23, 'Elastic Modulus': 73.1 , 'yield_stress': 440  },
++    {'material': '7075-T6', 'thermal_expansion_coefficient': 23.4, 'Elastic Modulus': 71.7, 'yield_stress': 462},
+     {'material': '4130 Steel', 'thermal_expansion_coefficient': 11.1, 'Elastic Modulus': 205, 'yield_stress': 1110},
+     {'material': '8630 Steel', 'thermal_expansion_coefficient': 11.3, 'Elastic Modulus': 200, 'yield_stress': 550},
+     {'material': '2024-T4', 'thermal_expansion_coefficient': 23.2, 'Elastic Modulus': 73.1, 'yield_stress': 260},
+@@ -18,3 +14,4 @@
+     {'material': '2024-T3', 'thermal_expansion_coefficient': 21.6, 'Elastic Modulus': 73.1, 'yield_stress': 275}
+                 ]
+ 
++
+Index: PropClass.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import InputVariables\r\nclass FuelTank:\r\n    def __init__(self, length, radius, t_1, t_2 , material):\r\n        self.length = length\r\n        self.radius = radius\r\n        self.t_1 = t_1\r\n        self.t_2 = t_2\r\n        self.TotalVolume = self.tank_volume()\r\n        self.material = material\r\n        self.YoungsModulus = self.get_youngs_modulus()\r\n        self.YieldStress = self.get_yield_stress()\r\n\r\n    def tank_volume(self):\r\n        volume_cylinder = 3.14159 * self.radius ** 2 * self.length\r\n        volume_caps =  4/3 * 3.14159 * self.radius ** 3\r\n        total_volume = volume_cylinder + volume_caps\r\n        return total_volume\r\n    def get_youngs_modulus(self):\r\n        for element in InputVariables.TankMaterial:\r\n            if element[\"material\"] == self.material:\r\n                YoungsModulus = element[\"Elastic Modulus\"]\r\n                break\r\n        return YoungsModulus\r\n    def get_yield_stress(self):\r\n        for element in InputVariables.TankMaterial:\r\n            if element[\"material\"] == self.material:\r\n                yield_stress = element[\"yield_stress\"]\r\n                break\r\n        return yield_stress\r\n\r\n\r\nfuel_tank = FuelTank(length=1, radius=1, t_1=3, t_2=4, material=\"Aluminium 7075\")\r\nprint(f\"Total volume of the fuel tank: {fuel_tank.TotalVolume}\")\r\nprint(f\"Material stiffness of fuel tank: {fuel_tank.YoungsModulus} in GPa \")\r\nprint(f\"Material of fuel tank: {fuel_tank.material}\")
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/PropClass.py b/PropClass.py
+--- a/PropClass.py	(revision 2ef190daf5c0c3ad01021e59331fe24897cd6939)
++++ b/PropClass.py	(date 1701964734617)
+@@ -1,14 +1,16 @@
+ import InputVariables
+ class FuelTank:
+-    def __init__(self, length, radius, t_1, t_2 , material):
++    def __init__(self, length, radius, t_1, t_2 , material, poisson_ratio):
+         self.length = length
+         self.radius = radius
+         self.t_1 = t_1
+         self.t_2 = t_2
+         self.TotalVolume = self.tank_volume()
+         self.material = material
++        self.
+         self.YoungsModulus = self.get_youngs_modulus()
+         self.YieldStress = self.get_yield_stress()
++        self.poisson_ratio = poisson_ratio
+ 
+     def tank_volume(self):
+         volume_cylinder = 3.14159 * self.radius ** 2 * self.length
