@@ -23,3 +23,6 @@ TankMaterial = [
 
 gas_constant = 8.314 #J/(mol*K)
 
+a = 0
+b = 0
+alpha = 0
