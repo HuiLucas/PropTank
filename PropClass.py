@@ -1,4 +1,5 @@
 import InputVariables
+
 class FuelTank:
     def __init__(self, length, radius, t_1, t_2 , material):
         self.length = length

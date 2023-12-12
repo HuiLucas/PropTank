@@ -19,6 +19,7 @@ TankMaterial = [
     {'material': 'Ti-6AI-4V', 'Elastic Modulus': 113.8, 'yield_stress': 970, 'density': 4.43, 'poisson_ratio': 0.34},
     {'material': 'Al-Li 2195', 'Elastic Modulus': 69, 'yield_stress': 560, 'density': 2.71, 'poisson_ratio': 0.33},
     {'material': 'S2-glass/epoxy', 'Elastic Modulus': 86.9, 'yield_stress': 4890, 'density': 2.46, 'poisson_ratio': 0.23}
+]
 
-                ]
+gas_constant = 8.314 #J/(mol*K)
 
