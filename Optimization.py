@@ -22,17 +22,17 @@ def constraint_shell_buckling(TankClass,Loads):
     return sb.calculate_shell_buckling(TankClass,Loads)
 
 def constraint_column_buckling(TankClass,Loads):
-    # launc
-    return cb.calculate_column_buckling_stress(TankClass,Loads) + Loads.pressure +
+    # launch load - pressure_longitudinal < critical stress column
+    return cb.calculate_column_buckling_stress(TankClass,Loads)
 
-
+def constraint_
 
 
 constraints = [
     {'type': 'eq', 'fun': constraint_equation_state},
-    {'type': 'ineq', 'fun': constraint_equation_state},
+    {'type': 'ineq', 'fun': constraint_shell_buckling},
+    {'type': 'ineq', 'fun': constraint_column_buckling},
 ]
 
 
 result = minimize(objective_function, initial_design, constraints=constraints, method='SLSQP')
-"#"
