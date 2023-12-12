@@ -24,10 +24,13 @@ gas_constant = 8.314 #J/(mol*K)
 omega = chemicals.acentric.omega("60-34-4")
 kappa = 0.37464 + 1.54226 * omega - 0.26992 * omega ** 2
 T_critical = chemicals.critical.Tc("60-34-4")
-p_critical = chemicals.critical.Pc("60-35-4")
+p_critical = chemicals.critical.Pc("60-34-4")
 a = 0.45724 * gas_constant ** 2 * T_critical ** 2 / p_critical
 b = 0.07780 * gas_constant * T_critical / p_critical
 #alpha = ( 1 + kappa * ( 1 - np.sqrt(T_r) ) ) ** 2
 def get_alpha(T):
     T_r = T / T_critical
     return ( 1 + kappa * ( 1 - np.sqrt(T_r) ) ) ** 2
+molar_mass = chemicals.identifiers.MW("60-34-4")
+m = 97.57 #kg
+n = m / molar_mass
