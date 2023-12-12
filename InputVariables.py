@@ -31,3 +31,5 @@ b = 0.07780 * gas_constant * T_critical / p_critical
 def get_alpha(T):
     T_r = T / T_critical
     return ( 1 + kappa * ( 1 - np.sqrt(T_r) ) ) ** 2
+total_mass_sc = 854.964 #kg
+
