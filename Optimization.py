@@ -26,7 +26,6 @@ def constraint_shell_buckling(TankClass, Loads):
 def constraint_column_buckling(TankClass,Loads):
     # launch load - pressure_longitudinal <= critical stress column
     return cb.calculate_column_buckling_stress(TankClass,Loads)
-
 def constraint_volume(TankClass,volume_liquid):
     volume_tank = TankClass.TotalVolume
     return volume_tank - volume_liquid
