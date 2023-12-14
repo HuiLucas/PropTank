@@ -11,7 +11,7 @@ class FuelTank:
         self.YoungsModulus = self.get_youngs_modulus()
         self.YieldStress = self.get_yield_stress()
         self.PoissonRatio = self.get_poisson_ratio()
-        self.denisty = self.get_density()
+        self.density = self.get_density()
 
     def tank_volume(self):
         volume_cylinder = 3.14159 * self.radius ** 2 * (self.length - 2*self.radius)
