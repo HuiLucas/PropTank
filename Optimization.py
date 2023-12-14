@@ -6,6 +6,7 @@ import InputVariables
 import numpy as np
 import ShellBuckling as sb
 import ColumnBuckling as cb
+import StressCalculator as sc
 
 tank_variables = PropClass.FuelTank(4,2, t_1 = 3*10**-3, t_2 = 3*10**-3, material= "Ti-6AI-4V")
 temperature = 273
@@ -37,13 +38,18 @@ def constraint_equation_state(variables):
 def constraint_shell_buckling(variables):
     poissoin_ratio = tank_variables.PoissonRatio
     youngs_modulus = tank_variables.YoungsModulus
+    LaunchStress = sc.launch_stress_calculator(variables[1], InputVariables.total_mass_sc, variables[3])
+    StressCrit = sb.calculate_shell_buckling(variables[2],variables[1],variables[3],poissoin_ratio,variables[0],youngs_modulus)
     #  launch load - pressure_longitudinal <= critical stress from shell buckling
-    return sb.calculate_shell_buckling(variables[2],variables[1],variables[3],poissoin_ratio,variables[0],youngs_modulus)
+    return LaunchStress - StressCrit
 
 def constraint_column_buckling(variables):
     youngs_modulus = tank_variables.YoungsModulus
+    LaunchStress = sc.launch_stress_calculator(variables[1], InputVariables.total_mass_sc, variables[3])
+    PressStress = (variables[0] * variables[1]) / (variables[3] * 2)
+    StressCrit = cb.calculate_column_buckling_stress(variables[2], variables[1], variables[3], youngs_modulus)
     # launch load - pressure_longitudinal <= critical stress column
-    return cb.calculate_column_buckling_stress(variables[2],variables[1],variables[3],youngs_modulus)
+    return LaunchStress - PressStress - StressCrit
 def constraint_volume(variables):
     return variables[7] - variables[6]
 def constraint_temp_upper(variables):
@@ -55,13 +61,13 @@ def constraint_temp_lower(variables):
 def constraint_hoop_stress(variables):
     yield_stress = tank_variables.YieldStress
     #sigma_yield = (pressure*R)/t_1
-    #Safety factor of 1.1
-    return yield_stress * 1.1 - (variables[0]*variables[1])/variables[3]
+    #Safety factor of 1.25
+    return yield_stress * 1.25 - (variables[0]*variables[1])/variables[3]
 def constraint_longitudinal_stress(variables):
     yield_stress = tank_variables.YieldStress
     #sigma_yield= (pressure*R)/(2*T_1)
-    # Safety factor of 1.1
-    return yield_stress * 1.1 - (variables[0]*variables[1])/(variables[3]*2)
+    # Safety factor of 1.25
+    return yield_stress * 1.25 - (variables[0]*variables[1])/(variables[3]*2)
 
 constraints = [
     {'type': 'eq', 'fun': constraint_equation_state},
@@ -77,7 +83,7 @@ constraints = [
 # for guess in initial_guesses:
 #     result = minimize(objective_function, guess, constraints=constraints, method='SLSQP')
 #     print(result)
-bounds = [(0.0001, 100000000), (0.0001,9), (0.0001,18), (0.000001,1), (0.000001,1), (0.0001,1000), (0.0000001,100), (0.00000001,100)]
+bounds = [(1013250, 2431800), (0.0001,9), (0.0001,18), (0.000001,1), (0.000001,1), (0.0001,1000), (0.0000001,100), (0.00000001,100)]
 result = minimize(objective_function,bounds=bounds, constraints=constraints, method = "SLSQP", x0 = variables2, options = {'disp': True}) #minimizer_kwargs={'method': 'SLSQP'})
 print(result)
 #print(result)
