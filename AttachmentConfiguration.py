@@ -1,6 +1,7 @@
 #Selection of the material
-
-CompressiveLoad = #calculated
+#import chemicals
+import InputVariables
+CompressiveLoad = 6*9.81*InputVariables.total_mass_sc
 NBeams = 8
 ActualLoad = CompressiveLoad/NBeams
 MassTwoPreviousLugs = 79.05 * 10**(-3)
