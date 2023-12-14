@@ -16,7 +16,7 @@ TankMaterial = [
     {'material': '2024-T3', 'thermal_expansion_coefficient': 21.6, 'Elastic Modulus': 73.1, 'yield_stress': 275},
     {'material': 'Ti-6AI-4V', 'Elastic Modulus': 113.8, 'yield_stress': 970, 'density': 4.43, 'poisson_ratio': 0.34},
     {'material': 'Al-Li 2195', 'Elastic Modulus': 69, 'yield_stress': 560, 'density': 2.71, 'poisson_ratio': 0.33},
-    {'material': 'S2-glass/epoxy', 'Elastic Modulus': 20, 'yield_stress': 457, 'density': 1.84, 'poisson_ratio': 0.23}
+    {'material': 'S2-glass/epoxy', 'Elastic Modulus': 20 , 'yield_stress': 457, 'density': 1.84, 'poisson_ratio': 0.23}
 ]
 
 #### PROPELLANT PROPERTIES:
