@@ -60,3 +60,4 @@ constraints = [
 #     print(result)
 
 result = scipy.optimize.shgo(objective_function, constraints=constraints, method='SLSQP')
+print(result)
