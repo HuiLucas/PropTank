@@ -31,11 +31,11 @@ def constraint_volume(TankClass,volume_liquid):
     volume_tank = TankClass.TotalVolume
     return volume_tank - volume_liquid
 def constraint_temp_upper(temperature):
-    # temperature <= 25
-    return temperature - 25
+    # temperature <= 298.15
+    return temperature - 298.15
 def constraint_temp_lower(temperature):
-    # -10 <= temperature
-    return -10 - temperature
+    # 263.15 <= temperature
+    return 263.15 - temperature
 def constraint_hoop_stress(TankClass, pressure):
     #sigma_yield = (pressure*R)/t_1
     #Safety factor of 1.1
@@ -60,3 +60,4 @@ constraints = [
 #     print(result)
 
 result = scipy.optimize.shgo(objective_function, constraints=constraints, method='SLSQP')
+print(result)
