@@ -36,15 +36,22 @@ def constraint_temp_upper(temperature):
 def constraint_temp_lower(temperature):
     # -10 <= temperature
     return -10 - temperature
-
-
-
+def constraint_hoop_stress(TankClass, pressure):
+    #sigma_yield = (pressure*R)/t_1
+    #Safety factor of 1.1
+    return TankClass.YieldStress * 1.1 - (pressure*TankClass.radius)/TankClass.t_1
+def constraint_longitudinal_stress(TankClass, pressure):
+    #sigma_yield= (pressure*R)/(2*T_1)
+    # Safety factor of 1.1
+    return TankClass.YieldStress * 1.1 - (pressure*TankClass.radius)/(TankClass.t_1 *2)
 constraints = [
     {'type': 'eq', 'fun': constraint_equation_state},
     {'type': 'ineq', 'fun': constraint_shell_buckling},
     {'type': 'ineq', 'fun': constraint_column_buckling},
     {'type': 'ineq', 'fun': constraint_temp_lower},
     {'type': 'ineq', 'fun': constraint_temp_upper},
+    {'type': 'eq', 'fun': constraint_hoop_stress},
+    {'type': 'eq', 'fun': constraint_longitudinal_stress}
 ]
 
 # initial_guesses = [[],[],[]]
