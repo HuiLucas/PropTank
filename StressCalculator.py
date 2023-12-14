@@ -4,7 +4,7 @@ import numpy as np
 
 def launch_stress_calculator(Radius,mass,t_1):
     launch_force = 6 * 9.80665 * mass
-    print(launch_force)
+    #print(launch_force)
     section_area = np.pi * ((Radius + t_1)**2 - Radius**2)
     launch_stress = launch_force/section_area
     return launch_stress

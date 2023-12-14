@@ -8,9 +8,9 @@ import ShellBuckling as sb
 import ColumnBuckling as cb
 import StressCalculator as sc
 
-tank_variables = PropClass.FuelTank(4,2, t_1 = 3*10**-3, t_2 = 3*10**-3, material= "Ti-6AI-4V")
+tank_variables = PropClass.FuelTank(8000000000000000,0.5, t_1 = 3*10**-3, t_2 = 3*10**-3, material= "Ti-6AI-4V")
 temperature = 273
-loads = PropClass.Loads(pressure=2.5 * 10 ** 6, launch_axial_loads= 6 * 9.81)
+loads = PropClass.Loads(pressure=1 * 10 ** 6, launch_axial_loads= 6 * 9.81)
 volume_liquid = 0.1 #m**3
 
 
@@ -33,15 +33,19 @@ def constraint_equation_state(variables):
     b = InputVariables.b
     gas_const = InputVariables.gas_constant
     n = InputVariables.n
-    return gas_const * variables[5] / ( variables[6] / n - b ) - a * alpha / ( (variables[6] / n) ** 2 + 2 * b * variables[6] / n - b ** 2 ) - variables[0]
-
+    eqstate = gas_const * variables[5] / ( variables[6] / n - b ) - a * alpha / ( (variables[6] / n) ** 2 + 2 * b * variables[6] / n - b ** 2 ) - variables[0]
+    if abs(eqstate) > 0.1:
+        print("eq_of_state violated", eqstate)
+    return eqstate
 def constraint_shell_buckling(variables):
     poissoin_ratio = tank_variables.PoissonRatio
     youngs_modulus = tank_variables.YoungsModulus
     LaunchStress = sc.launch_stress_calculator(variables[1], InputVariables.total_mass_sc, variables[3])
     StressCrit = sb.calculate_shell_buckling(variables[2],variables[1],variables[3],poissoin_ratio,variables[0],youngs_modulus)
     #  launch load - pressure_longitudinal <= critical stress from shell buckling
-    return LaunchStress - StressCrit
+    if -LaunchStress + StressCrit < 0:
+        print("violate shell buckle")
+    return -LaunchStress + StressCrit
 
 def constraint_column_buckling(variables):
     youngs_modulus = tank_variables.YoungsModulus
@@ -49,7 +53,9 @@ def constraint_column_buckling(variables):
     PressStress = (variables[0] * variables[1]) / (variables[3] * 2)
     StressCrit = cb.calculate_column_buckling_stress(variables[2], variables[1], variables[3], youngs_modulus)
     # launch load - pressure_longitudinal <= critical stress column
-    return LaunchStress - PressStress - StressCrit
+    if -LaunchStress + PressStress + StressCrit < 0:
+        print("column buckling no good")
+    return -LaunchStress + PressStress + StressCrit
 def constraint_volume(variables):
     return variables[7] - variables[6]
 def constraint_temp_upper(variables):
@@ -62,17 +68,18 @@ def constraint_hoop_stress(variables):
     yield_stress = tank_variables.YieldStress
     #sigma_yield = (pressure*R)/t_1
     #Safety factor of 1.25
-    return yield_stress * 1.25 - (variables[0]*variables[1])/variables[3]
+    return yield_stress - (variables[0]*variables[1])/variables[3]
 def constraint_longitudinal_stress(variables):
     yield_stress = tank_variables.YieldStress
     #sigma_yield= (pressure*R)/(2*T_1)
     # Safety factor of 1.25
-    return yield_stress * 1.25 - (variables[0]*variables[1])/(variables[3]*2)
+    return yield_stress - (variables[0]*variables[1])/(variables[3]*2)
 
 constraints = [
     {'type': 'eq', 'fun': constraint_equation_state},
     {'type': 'ineq', 'fun': constraint_shell_buckling},
     {'type': 'ineq', 'fun': constraint_column_buckling},
+    {'type': 'eq', 'fun': constraint_volume},
     {'type': 'ineq', 'fun': constraint_temp_lower},
     {'type': 'ineq', 'fun': constraint_temp_upper},
     {'type': 'eq', 'fun': constraint_hoop_stress},
