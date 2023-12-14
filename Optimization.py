@@ -1,3 +1,5 @@
+import scipy.optimize
+
 import PropClass
 from scipy.optimize import minimize
 import InputVariables
@@ -45,7 +47,9 @@ constraints = [
     {'type': 'ineq', 'fun': constraint_temp_upper},
 ]
 
-initial_guesses = [[],[],[]]
-for guess in initial_guesses:
-    result = minimize(objective_function, guess, constraints=constraints, method='SLSQP')
-    print(result)
+# initial_guesses = [[],[],[]]
+# for guess in initial_guesses:
+#     result = minimize(objective_function, guess, constraints=constraints, method='SLSQP')
+#     print(result)
+
+result = scipy.optimize.shgo(objective_function, constraints=constraints, method='SLSQP')
