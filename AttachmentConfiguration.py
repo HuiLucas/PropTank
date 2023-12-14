@@ -14,5 +14,5 @@ Ratio = (1371/2)/ActualLoad   #sqr(load of launch)/actualLoad
 MassNewLug = Ratio*(MassTwoPreviousLugs/2)
 TotalMassLugs = MassNewLug * NBeams
 
-print(MassNewLug)
-print(TotalMassLugs)
+print("Mass of the lug: ", MassNewLug)
+print("Mass of the attachments: ", TotalMassLugs)
