@@ -11,13 +11,13 @@ import StressCalculator as sc
 tank_variables = PropClass.FuelTank(8000000000000000,0.5, t_1 = 3*10**-3, t_2 = 3*10**-3, material= "Ti-6AI-4V")
 temperature = 273
 loads = PropClass.Loads(pressure=1 * 10 ** 6, launch_axial_loads= 6 * 9.81)
-volume_liquid = 0.1 #m**3
+volume_liquid = 0.1# m**3
 
 
 variables2 = [loads.pressure,
-             tank_variables.radius ,
-             tank_variables.length ,
-             tank_variables.t_1 ,
+             tank_variables.radius,
+             tank_variables.length,
+             tank_variables.t_1,
              tank_variables.t_2,
              temperature,
              volume_liquid ,
