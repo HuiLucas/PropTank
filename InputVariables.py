@@ -32,8 +32,6 @@ def get_alpha(T):
     T_r = T / T_critical
     return ( 1 + kappa * ( 1 - np.sqrt(T_r) ) ) ** 2
 molar_mass = chemicals.identifiers.MW("60-34-4")
-m = 97.57 #kg
-n = m / molar_mass
-
+propellant_mass = 97.57 #kg
+n = (propellant_mass * 1000)/ molar_mass
 total_mass_sc = 854.964 #kg
-
