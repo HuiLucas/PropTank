@@ -1,5 +1,6 @@
 import chemicals
 import numpy as np
+
 TankMaterial = [
     {'material': '316 Stainless Steel', 'Elastic Modulus': 190, 'density': 8070, 'thermal_expansion_coefficient': 18, 'ultimate_tensile_strength': 620, 'yield_stress': 170, 'resistance_factors': 'Excellent'},
     {'material': '18-8 SS', 'Elastic Modulus': 193, 'density': 7930, 'thermal_expansion_coefficient': 17.8, 'ultimate_tensile_strength': 620, 'yield_stress': 310, 'resistance_factors': 'Respectable but not for salty environments'},
@@ -21,12 +22,18 @@ TankMaterial = [
 
 #### PROPELLANT PROPERTIES:
 gas_constant = 8.314 #J/(mol*K)
+gas_constant2 = 82.0573660809596 #cm^3*atm/(mol*K)
 omega = chemicals.acentric.omega("60-34-4")
+#print(omega)
 kappa = 0.37464 + 1.54226 * omega - 0.26992 * omega ** 2
 T_critical = chemicals.critical.Tc("60-34-4")
 p_critical = chemicals.critical.Pc("60-34-4")
-a = 0.45724 * gas_constant ** 2 * T_critical ** 2 / p_critical
-b = 0.07780 * gas_constant * T_critical / p_critical
+p_critical_atm = p_critical / 101325
+#print(T_critical, p_critical)
+a = 0.45724 * gas_constant ** 2 * T_critical ** 2 / p_critical_atm
+
+b = 0.07780 * gas_constant * T_critical / p_critical_atm
+#print(a, b)
 #alpha = ( 1 + kappa * ( 1 - np.sqrt(T_r) ) ) ** 2
 def get_alpha(T):
     T_r = T / T_critical

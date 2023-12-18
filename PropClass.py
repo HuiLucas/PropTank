@@ -1,4 +1,5 @@
 import InputVariables
+import numpy as np
 
 class FuelTank:
     def __init__(self, length, radius, t_1, t_2 , material):
@@ -14,8 +15,8 @@ class FuelTank:
         self.density = self.get_density()
 
     def tank_volume(self):
-        volume_cylinder = 3.14159 * self.radius ** 2 * (self.length - 2*self.radius)
-        volume_caps = 4/3 * 3.14159 * self.radius ** 3
+        volume_cylinder = np.pi * self.radius ** 2 * (self.length - 2*self.radius)
+        volume_caps = 4/3 * np.pi * self.radius ** 3
         total_volume = volume_cylinder + volume_caps
         return total_volume
     def get_youngs_modulus(self):
@@ -47,3 +48,6 @@ class Loads:
     def __init__(self,pressure,launch_axial_loads):
         self.pressure = pressure
         self.launch_axial_loads = launch_axial_loads
+
+
+#print(FuelTank(length=10,radius=0.3, t_1=5e-02, t_2=5e-02, material="Ti-6AI-4V").TotalVolume)
