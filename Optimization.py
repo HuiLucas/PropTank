@@ -99,6 +99,16 @@ def constraint_hoop_stress(variables):
     return yield_stress - (constraint_equation_state(variables) * variables[1]) / variables[3]
 
 
+def constraint_hoop_stress_ends(variables):
+    yield_stress = tank_variables.YieldStress * 10 ** 6
+    # sigma_yield = (pressure*R)/t_2
+    # Safety factor of 1.25
+    if yield_stress - (constraint_equation_state(variables) * variables[1]) / variables[0] < 0:
+        print("hoop stress spherical ends violated", yield_stress,
+              (constraint_equation_state(variables) * variables[1]) / variables[0])
+    return yield_stress - (constraint_equation_state(variables) * variables[1]) / variables[0]
+
+
 def constraint_longitudinal_stress(variables):
     yield_stress = tank_variables.YieldStress * 10 ** 6
     # sigma_yield= (pressure*R)/(2*T_1)
@@ -136,6 +146,7 @@ constraints = [
     {'type': 'ineq', 'fun': constraint_temp_lower},  # , 'jac': lambda x: np.array([1, 0, 0, 0, 0])},
     {'type': 'ineq', 'fun': constraint_temp_upper},  # , 'jac': lambda x: np.array([-1, 0, 0, 0, 0])},
     {'type': 'ineq', 'fun': constraint_hoop_stress},  # , 'jac': lambda x: np.array([0, -0.001, 0, 0.0005])},
+    {'type': 'ineq', 'fun': constraint_hoop_stress_ends},
     {'type': 'ineq', 'fun': constraint_longitudinal_stress},  # , 'jac': lambda x: np.array([0, -0.001, 0, 0.0005])},
     {'type': 'ineq', 'fun': upper_constraint_pressure},  # , 'jac': lambda x: np.array([0, 0.0013, 0.5, 0])},
     {'type': 'ineq', 'fun': lower_constraint_pressure},  # , 'jac': lambda x: np.array([0, 0.0013, 0.5, 0])},
@@ -180,4 +191,4 @@ print("Pressure: ", constraint_equation_state(result.x), " pascal")
 print(constraints[0]['fun'](result.x))
 print(objective_function(result.x), "kg")
 print(best_configuration)
-
+#get mass of the tank for the Attachment Configuration and iterate
