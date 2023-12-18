@@ -7,7 +7,7 @@ import numpy as np
 import ShellBuckling as sb
 import ColumnBuckling as cb
 import StressCalculator as sc
-
+import random
 tank_variables = PropClass.FuelTank(3, 0.5, t_1=10 * 10 ** -3, t_2=5 * 10 ** -3, material="Ti-6AI-4V")
 temperature = 263.15  # K
 volume_liquid = tank_variables.TotalVolume  # m**3
@@ -17,11 +17,22 @@ initial_pressure = (InputVariables.gas_constant2 * temperature / (
                                 volume_liquid * 10 ** 6 / InputVariables.n) ** 2 + 2 * InputVariables.b * volume_liquid * 10 ** 6 / InputVariables.n - InputVariables.b ** 2)) * 101325
 loads = PropClass.Loads(pressure=initial_pressure, launch_axial_loads=6 * 9.81)
 
+max_length = 1.75
+
 variables2 = [tank_variables.t_2,
               tank_variables.radius,
               tank_variables.length,
               tank_variables.t_1,
               temperature]
+
+num_guesses = 1000  # number of times the optimization runs
+#### Optional max length make sure to change line in constraints dicitoinary
+"""
+def constraint_maxlength(variables):
+
+    return max_length - variables[2]
+"""
+####
 
 
 def objective_function(variables):
@@ -88,7 +99,6 @@ def constraint_temp_lower(variables):
         print("temp constraint violated2", variables[4])
     return -263.15 + variables[4]
 
-
 def constraint_hoop_stress(variables):
     yield_stress = tank_variables.YieldStress * 10 ** 6
     # sigma_yield = (pressure*R)/t_1
@@ -151,13 +161,23 @@ constraints = [
     {'type': 'ineq', 'fun': upper_constraint_pressure},  # , 'jac': lambda x: np.array([0, 0.0013, 0.5, 0])},
     {'type': 'ineq', 'fun': lower_constraint_pressure},  # , 'jac': lambda x: np.array([0, 0.0013, 0.5, 0])},
     {'type': 'ineq', 'fun': geometry},  # , 'jac': lambda x: np.array([0, -0.001, 0.005, 0])},
+    # Optional Max length{'type': 'ineq', 'fun': constraint_maxlength}
 ]
 
 
-bounds = [(0.0001, 0.1), (0.1, 2), (0.2, 4.5), (0.0001, 0.1)   , (263,300)] #, (0.0000001,100)]
+bounds = [(0.0001, 0.1), #t_2
+          (0.1, 2), # radius
+          (0.2, 4.5), #length
+          (0.0001, 0.1), #t_1
+          (263,300) #temp
+          ] #, (0.0000001,100)]
 guesses = [variables2]
 # for loops to generate guesses:
-# guesses.append(guess)
+
+for _ in range(num_guesses):
+    guess = [random.uniform(low, high) for low, high in bounds]
+    guesses.append(guess)
+
 dictionary = []
 for guess in guesses:
     result = minimize(objective_function,bounds=bounds, constraints=constraints, method = "SLSQP", x0 = guess, options = {'disp': True, 'maxiter': 1000}, callback=lambda variables: print(variables))  # , jac= lambda variables: np.array([0.00001,0.005,0.01,0.00003, 0])) #minimizer_kwargs={'method': 'SLSQP'})
@@ -180,7 +200,7 @@ print(best_configuration)
 #result = shgo(objective_function, bounds=bounds, constraints=constraints, minimizer_kwargs={'method': 'SLSQP', 'constraints': constraints, 'bounds': bounds, 'options': {'maxiter': 1000}},
 #              options={'disp': True, # 'jac': lambda variables: np.array([0.00001,0.005,0.01,0.00003, 0]),
 #                       }, sampling_method='sobol', n=10000, iters=3)
-print("result", result.message)
+"""print("result", result.message)
 print([(constraint['fun'](result.x) <= 0) for constraint in constraints])
 print([constraint['fun'](result.x) for constraint in constraints])
 print(result)
@@ -190,5 +210,18 @@ print(result.x)
 print("Pressure: ", constraint_equation_state(result.x), " pascal")
 print(constraints[0]['fun'](result.x))
 print(objective_function(result.x), "kg")
-print(best_configuration)
+print(best_configuration)"""
 #get mass of the tank for the Attachment Configuration and iterate
+
+if best_configuration is not None:
+    dimensions, mass = best_configuration
+    print("Best Configuration:")
+    print("t_2(mm):", dimensions[0] * 1000)
+    print("t_1(mm):", dimensions[3] * 1000)
+    print("radius(m):", dimensions[1])
+    print("length(m):", dimensions[2])
+    print("Mass(kg):", mass)
+    print("Temperature:", dimensions[4])
+    print("Pressure(atm):", constraint_equation_state(best_configuration[0])/101325)
+else:
+    print("No valid configuration found.")
