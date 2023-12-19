@@ -25,7 +25,7 @@ variables2 = [tank_variables.t_2,
               tank_variables.t_1,
               temperature]
 
-num_guesses = 1000  # number of times the optimization runs
+num_guesses = 10000  # number of times the optimization runs
 #### Optional max length make sure to change line in constraints dicitoinary
 """
 def constraint_maxlength(variables):
@@ -174,16 +174,27 @@ bounds = [(0.0001, 0.1), #t_2
           (263,300) #temp
           ] #, (0.0000001,100)]
 
-guesses = [variables2]
 # for loops to generate guesses:
+# Latin Hypercube Sampling (LHS) function
+def latin_hypercube_sampling(bounds, num_guesses):
+    num_variables = len(bounds)
+    lhs_samples = np.zeros((num_guesses, num_variables))
 
-for _ in range(num_guesses):
-    guess = [random.uniform(low, high) for low, high in bounds]
-    guesses.append(guess)
+    for i, (low, high) in enumerate(bounds):
+        lhs_samples[:, i] = np.random.uniform(low, high, num_guesses)
+
+    for i in range(num_guesses):
+        np.random.shuffle(lhs_samples[i])  # Shuffle each row for randomness
+
+    return lhs_samples.tolist()
+
+
+# Generate initial guesses using Latin Hypercube Sampling
+guesses = latin_hypercube_sampling(bounds, num_guesses)
 
 dictionary = []
 for guess in guesses:
-    result = minimize(objective_function,bounds=bounds, constraints=constraints, method = "SLSQP", x0 = guess, options = {'disp': True, 'maxiter': 1000}, callback=lambda variables: print(variables))  # , jac= lambda variables: np.array([0.00001,0.005,0.01,0.00003, 0])) #minimizer_kwargs={'method': 'SLSQP'})
+    result = minimize(objective_function,bounds=bounds, constraints=constraints, method = "SLSQP", x0 = guess, options = {'disp': True, 'maxiter': 1000}, callback=lambda variables: print(variables))# , jac= lambda variables: np.array([0.00001,0.005,0.01,0.00003, 0])) #minimizer_kwargs={'method': 'SLSQP'})
     if result.success == True and 0.01 <= result.fun <=10000:
         dictionary.append([result.x, result.fun])
 
@@ -227,5 +238,7 @@ if best_configuration is not None:
     print("Temperature:", dimensions[4])
     print("Pressure(atm):", constraint_equation_state(best_configuration[0])/101325)
     print("Volume(m^3): ", constraint_volume(best_configuration[0]))
+    print("Material :" , tank_variables.material)
+    print("Number of sucessfull guesses : " , len(dictionary), "out of " , num_guesses )
 else:
     print("No valid configuration found.")
