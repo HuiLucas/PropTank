@@ -196,6 +196,8 @@ dictionary = []
 for guess in guesses:
     result = minimize(objective_function,bounds=bounds, constraints=constraints, method = "SLSQP", x0 = guess, options = {'disp': True, 'maxiter': 1000}, callback=lambda variables: print(variables))# , jac= lambda variables: np.array([0.00001,0.005,0.01,0.00003, 0])) #minimizer_kwargs={'method': 'SLSQP'})
     if result.success == True and 0.01 <= result.fun <=10000:
+        formatted_x = [f"{val:.6f}" for val in result.x]  # Adjust precision as needed
+        print(f"Success: {result.success}, Optimized Variables: {formatted_x}")
         dictionary.append([result.x, result.fun])
 
 best_configuration = None
