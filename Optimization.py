@@ -63,8 +63,8 @@ def constraint_shell_buckling(variables):
     StressCrit = sb.calculate_shell_buckling(variables[2], variables[1], variables[3], poissoin_ratio,
                                              constraint_equation_state(variables), youngs_modulus)
     #  launch load - pressure_longitudinal <= critical stress from shell buckling
-    if -LaunchStress + StressCrit < 0:
-        print("violate shell buckle", LaunchStress, StressCrit)
+    #if -LaunchStress + StressCrit < 0:
+        #print("violate shell buckle", LaunchStress, StressCrit)
     return -LaunchStress + StressCrit
 
 
@@ -76,36 +76,37 @@ def constraint_column_buckling(variables):
     PressStress = (constraint_equation_state(variables) * variables[1]) / (variables[3] * 2)
     StressCrit = cb.calculate_column_buckling_stress(variables[2], variables[1], variables[3], youngs_modulus)
     # launch load - pressure_longitudinal <= critical stress column
-    if -LaunchStress + PressStress + StressCrit < 0:
-        print("column buckling no good", LaunchStress - PressStress, StressCrit)
+    #if -LaunchStress + PressStress + StressCrit < 0:
+        #print("column buckling no good", LaunchStress - PressStress, StressCrit)
     return -LaunchStress + PressStress + StressCrit
 
 
 def constraint_volume(variables):
+
     calcvolume = np.pi * variables[1] ** 2 * (variables[2] - 2 * variables[1]) + 4 / 3 * np.pi * variables[1] ** 3
     return calcvolume
 
 
 def constraint_temp_upper(variables):
     # variables[4] <= 298.15
-    if -variables[4] + 298.15 < 0:
-        print("temp constraint violated", variables[4])
+    #if -variables[4] + 298.15 < 0:
+        #print("temp constraint violated", variables[4])
     return -variables[4] + 298.15
 
 
 def constraint_temp_lower(variables):
     # 263.15 <= variables[4]
-    if -263.15 + variables[4] < 0:
-        print("temp constraint violated2", variables[4])
+    #if -263.15 + variables[4] < 0:
+        #print("temp constraint violated2", variables[4])
     return -263.15 + variables[4]
 
 def constraint_hoop_stress(variables):
     yield_stress = tank_variables.YieldStress * 10 ** 6
     # sigma_yield = (pressure*R)/t_1
     # Safety factor of 1.25
-    if yield_stress - (constraint_equation_state(variables) * variables[1]) / variables[3] < 0:
-        print("hoop stress violated", yield_stress,
-              (constraint_equation_state(variables) * variables[1]) / variables[3])
+    #if yield_stress - (constraint_equation_state(variables) * variables[1]) / variables[3] < 0:
+        #print("hoop stress violated", yield_stress,
+              #(constraint_equation_state(variables) * variables[1]) / variables[3])
     return yield_stress - (constraint_equation_state(variables) * variables[1]) / variables[3]
 
 
@@ -113,9 +114,9 @@ def constraint_hoop_stress_ends(variables):
     yield_stress = tank_variables.YieldStress * 10 ** 6
     # sigma_yield = (pressure*R)/t_2
     # Safety factor of 1.25
-    if yield_stress - (constraint_equation_state(variables) * variables[1]) / variables[0] < 0:
-        print("hoop stress spherical ends violated", yield_stress,
-              (constraint_equation_state(variables) * variables[1]) / variables[0])
+    #if yield_stress - (constraint_equation_state(variables) * variables[1]) / variables[0] < 0:
+        #print("hoop stress spherical ends violated", yield_stress,
+              #(constraint_equation_state(variables) * variables[1]) / variables[0])
     return yield_stress - (constraint_equation_state(variables) * variables[1]) / variables[0]
 
 
@@ -123,28 +124,28 @@ def constraint_longitudinal_stress(variables):
     yield_stress = tank_variables.YieldStress * 10 ** 6
     # sigma_yield= (pressure*R)/(2*T_1)
     # Safety factor of 1.25
-    if yield_stress - (constraint_equation_state(variables) * variables[1]) / (variables[3] * 2) < 0:
-        print("longitudinal stress violated", yield_stress,
-              (constraint_equation_state(variables) * variables[1]) / (variables[3] * 2))
+    #if yield_stress - (constraint_equation_state(variables) * variables[1]) / (variables[3] * 2) < 0:
+        #print("longitudinal stress violated", yield_stress,
+              #(constraint_equation_state(variables) * variables[1]) / (variables[3] * 2))
     return yield_stress - (constraint_equation_state(variables) * variables[1]) / (variables[3] * 2)
 
 
 def upper_constraint_pressure(variables):
-    if -constraint_equation_state(
-            variables) + 2400000  < 0:  # source: https://www.space-propulsion.com/spacecraft-propulsion/bipropellant-thrusters/200n-bipropellant-thrusters.html
-        print("upper pressure constraint violated", constraint_equation_state(variables))
+    #if -constraint_equation_state(
+            #variables) + 2400000  < 0:  # source: https://www.space-propulsion.com/spacecraft-propulsion/bipropellant-thrusters/200n-bipropellant-thrusters.html
+        #print("upper pressure constraint violated", constraint_equation_state(variables))
     return -constraint_equation_state(variables) + 2400000
 
 def lower_constraint_pressure(variables):
-    if constraint_equation_state(
-            variables) - 1300000  < 0:  # source: https://www.space-propulsion.com/spacecraft-propulsion/bipropellant-thrusters/200n-bipropellant-thrusters.html
-        print("lower pressure constraint violated", constraint_equation_state(variables))
+    #if constraint_equation_state(
+           # variables) - 1300000  < 0:  # source: https://www.space-propulsion.com/spacecraft-propulsion/bipropellant-thrusters/200n-bipropellant-thrusters.html
+       # print("lower pressure constraint violated", constraint_equation_state(variables))
     return constraint_equation_state(variables) - 1300000
 
 
 def geometry(variables):
-    if -2 * variables[1] + variables[2] < 0:
-        print("geometry constraint violated", 2 * variables[1], variables[2])
+    #if -2 * variables[1] + variables[2] < 0:
+        #print("geometry constraint violated", 2 * variables[1], variables[2])
     return variables[2] - 2 * variables[1]
 
 
@@ -164,13 +165,15 @@ constraints = [
     # Optional Max length{'type': 'ineq', 'fun': constraint_maxlength}
 ]
 
+guesses= [variables2]
 
 bounds = [(0.0001, 0.1), #t_2
           (0.1, 2), # radius
-          (0.2, 4.5), #length
+          (0.2, 2), #length
           (0.0001, 0.1), #t_1
           (263,300) #temp
           ] #, (0.0000001,100)]
+
 guesses = [variables2]
 # for loops to generate guesses:
 
@@ -223,5 +226,6 @@ if best_configuration is not None:
     print("Mass(kg):", mass)
     print("Temperature:", dimensions[4])
     print("Pressure(atm):", constraint_equation_state(best_configuration[0])/101325)
+    print("Volume(m^3): ", constraint_volume(best_configuration[0]))
 else:
     print("No valid configuration found.")
