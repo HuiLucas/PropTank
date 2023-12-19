@@ -58,7 +58,7 @@ def constraint_shell_buckling(variables):
     poissoin_ratio = tank_variables.PoissonRatio
     youngs_modulus = tank_variables.YoungsModulus
     LaunchStress = sc.launch_stress_calculator(variables[1],
-                                               InputVariables.total_mass_sc + objective_function(variables),
+                                               InputVariables.total_mass_sc - 11.55 + objective_function(variables) ,
                                                variables[3])
     StressCrit = sb.calculate_shell_buckling(variables[2], variables[1], variables[3], poissoin_ratio,
                                              constraint_equation_state(variables), youngs_modulus)
@@ -71,7 +71,7 @@ def constraint_shell_buckling(variables):
 def constraint_column_buckling(variables):
     youngs_modulus = tank_variables.YoungsModulus
     LaunchStress = sc.launch_stress_calculator(variables[1],
-                                               InputVariables.total_mass_sc + objective_function(variables),
+                                               InputVariables.total_mass_sc - 11.55 + objective_function(variables),
                                                variables[3])
     PressStress = (constraint_equation_state(variables) * variables[1]) / (variables[3] * 2)
     StressCrit = cb.calculate_column_buckling_stress(variables[2], variables[1], variables[3], youngs_modulus)
