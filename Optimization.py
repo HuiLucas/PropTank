@@ -8,7 +8,7 @@ import ShellBuckling as sb
 import ColumnBuckling as cb
 import StressCalculator as sc
 import random
-tank_variables = PropClass.FuelTank(3, 0.5, t_1=10 * 10 ** -3, t_2=5 * 10 ** -3, material="Ti-6AI-4V")
+tank_variables = PropClass.FuelTank(0.9909, 0.2, t_1=10 * 10 ** -3, t_2=5 * 10 ** -3, material="Ti-6AI-4V")
 temperature = 263.15  # K
 volume_liquid = tank_variables.TotalVolume  # m**3
 initial_pressure = (InputVariables.gas_constant2 * temperature / (
@@ -21,25 +21,32 @@ max_length = 1.75
 
 variables2 = [tank_variables.t_2,
               tank_variables.radius,
-              tank_variables.length,
+              tank_variables.TotalVolume,
               tank_variables.t_1,
               temperature]
 
+print("volume",variables2[2])
+
 num_guesses = 10000  # number of times the optimization runs
+
+def volume_to_length(variables):
+    return (2/3) * variables[1] + variables[2]/(np.pi * variables[1] ** 2)
+
 #### Optional max length make sure to change line in constraints dicitoinary
 """
 def constraint_maxlength(variables):
 
-    return max_length - variables[2]
+    return max_length - volume_to_length(variables)
 """
 ####
 
 
 def objective_function(variables):
     mass = 1000 * tank_variables.density * (
-            np.pi * 2 * variables[1] * variables[3] * (variables[2] - 2 * variables[1]) + 4 * np.pi * variables[
+            np.pi * 2 * variables[1] * variables[3] * (volume_to_length(variables) - 2 * variables[1]) + 4 * np.pi * variables[
         1] ** 2 * variables[0])
     return mass
+
 
 
 def constraint_equation_state(variables):
@@ -60,7 +67,7 @@ def constraint_shell_buckling(variables):
     LaunchStress = sc.launch_stress_calculator(variables[1],
                                                InputVariables.total_mass_sc - 11.55 + objective_function(variables) ,
                                                variables[3])
-    StressCrit = sb.calculate_shell_buckling(variables[2], variables[1], variables[3], poissoin_ratio,
+    StressCrit = sb.calculate_shell_buckling(volume_to_length(variables), variables[1], variables[3], poissoin_ratio,
                                              constraint_equation_state(variables), youngs_modulus)
     #  launch load - pressure_longitudinal <= critical stress from shell buckling
     #if -LaunchStress + StressCrit < 0:
@@ -74,7 +81,7 @@ def constraint_column_buckling(variables):
                                                InputVariables.total_mass_sc - 11.55 + objective_function(variables),
                                                variables[3])
     PressStress = (constraint_equation_state(variables) * variables[1]) / (variables[3] * 2)
-    StressCrit = cb.calculate_column_buckling_stress(variables[2], variables[1], variables[3], youngs_modulus)
+    StressCrit = cb.calculate_column_buckling_stress(volume_to_length(variables), variables[1], variables[3], youngs_modulus)
     # launch load - pressure_longitudinal <= critical stress column
     #if -LaunchStress + PressStress + StressCrit < 0:
         #print("column buckling no good", LaunchStress - PressStress, StressCrit)
@@ -83,7 +90,7 @@ def constraint_column_buckling(variables):
 
 def constraint_volume(variables):
 
-    calcvolume = np.pi * variables[1] ** 2 * (variables[2] - 2 * variables[1]) + 4 / 3 * np.pi * variables[1] ** 3
+    calcvolume = np.pi * variables[1] ** 2 * (volume_to_length(variables) - 2 * variables[1]) + 4 / 3 * np.pi * variables[1] ** 3
     return calcvolume
 
 
@@ -144,9 +151,9 @@ def lower_constraint_pressure(variables):
 
 
 def geometry(variables):
-    #if -2 * variables[1] + variables[2] < 0:
-        #print("geometry constraint violated", 2 * variables[1], variables[2])
-    return variables[2] - 2 * variables[1]
+    #if -2 * variables[1] + volume_to_length(variables) < 0:
+        #print("geometry constraint violated", 2 * variables[1], volume_to_length(variables))
+    return volume_to_length(variables) - 2 * variables[1]
 
 
 constraints = [
@@ -169,7 +176,7 @@ guesses= [variables2]
 
 bounds = [(0.0001, 0.1), #t_2
           (0.1, 2), # radius
-          (0.2, 2), #length
+          (0.1077, 0.1078), #volume
           (0.0001, 0.1), #t_1
           (263,300) #temp
           ] #, (0.0000001,100)]
@@ -197,7 +204,7 @@ for guess in guesses:
         formatted_x = [f"{val:.6f}" for val in result.x]  # Adjust precision as needed
         print(f"Success: {result.success}, Optimized Variables: {formatted_x}")
         dictionary.append([result.x, result.fun])
-
+    print(result)
 best_configuration = None
 min_mass = float('inf')
 # Iterate through the configurations
@@ -233,10 +240,13 @@ if best_configuration is not None:
     print("t_2(mm):", dimensions[0] * 1000)
     print("t_1(mm):", dimensions[3] * 1000)
     print("radius(m):", dimensions[1])
-    print("length(m):", dimensions[2])
+    print("volume(m):", dimensions[2])
+    print("length(m):", volume_to_length(dimensions))
     print("Mass(kg):", mass)
     print("Temperature:", dimensions[4])
-    print("Pressure(atm):", constraint_equation_state(best_configuration[0])/101325)
+    print("Pressure(MPa):", constraint_equation_state(best_configuration[0])/1000000)
+    print("Volume(m^3):", constraint_volume(best_configuration[0]))
+    print("moles:", InputVariables.n)
     print("Volume(m^3): ", constraint_volume(best_configuration[0]))
     print("Material :" , tank_variables.material)
     print("Number of sucessfull guesses : " , len(dictionary), "out of " , num_guesses )

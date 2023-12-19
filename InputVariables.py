@@ -30,9 +30,9 @@ T_critical = chemicals.critical.Tc("60-34-4")
 p_critical = chemicals.critical.Pc("60-34-4")
 p_critical_atm = p_critical / 101325
 #print(T_critical, p_critical)
-a = 0.45724 * gas_constant ** 2 * T_critical ** 2 / p_critical_atm
+a = 0.45724 * gas_constant2 ** 2 * T_critical ** 2 / p_critical_atm
 
-b = 0.07780 * gas_constant * T_critical / p_critical_atm
+b = 0.07780 * gas_constant2 * T_critical / p_critical_atm
 #print(a, b)
 #alpha = ( 1 + kappa * ( 1 - np.sqrt(T_r) ) ) ** 2
 def get_alpha(T):
@@ -43,3 +43,31 @@ molar_mass = chemicals.identifiers.MW("60-34-4")/1000 #kg/mol
 propellant_mass = 97.57 #kg
 n = (propellant_mass)/ molar_mass
 total_mass_sc = 854.964 #kg
+print(a, b, n, molar_mass, total_mass_sc, kappa, omega, get_alpha(400), T_critical, p_critical_atm)
+pr = 101325 * (gas_constant2 * 300 / ((0.87 * 10 ** 6 )/ n - b) - a * get_alpha(300) / (
+                ((0.87 * 10 ** 6 )/ n) ** 2 + 2 * b * (0.87 * 10 ** 6) / n - b ** 2))
+print(pr)
+print(gas_constant2 * 400 / ((0.111508571 * 10 ** 6) / n - b))
+print(a * get_alpha(400) / (
+                ((0.111508571 * 10 ** 6) / n) ** 2 + 2 * b * (0.111508571 * 10 ** 6) / n - b ** 2))
+#print(chemicals.miscdata.lookup_VDI_tabular_data("60-34-4", "Density (l)"))
+
+T_ex = 263.15 #K
+MW_ex = molar_mass*1000 #g/mol
+Tc_ex=T_critical#K
+Pc_ex=p_critical_atm #atm ; and
+omega_ex=omega
+kappa_ex = 0.37464 + 1.54226 * omega_ex - 0.26992 * omega_ex ** 2
+print(kappa_ex)
+a_ex = 0.45724 * gas_constant2 ** 2 * Tc_ex ** 2 / Pc_ex
+print(a_ex)
+b_ex = 0.07780 * gas_constant2 * Tc_ex / Pc_ex
+print(b_ex)
+alpha_ex = ( 1 + kappa_ex * ( 1 - np.sqrt(T_ex / Tc_ex) ) ) ** 2
+print(alpha_ex)
+V_ex = 0.1078 #m^3
+n_ex = propellant_mass*1000 / MW_ex
+pr_ex = (gas_constant2 * T_ex / ((V_ex * 10 ** 6) / n_ex - b_ex) - a_ex * alpha_ex / (
+                ((V_ex * 10 ** 6) / n_ex) ** 2 + 2 * b_ex * (V_ex * 10 ** 6) / n_ex - b_ex ** 2))
+print(pr_ex)
+
