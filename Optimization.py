@@ -184,12 +184,10 @@ def latin_hypercube_sampling(bounds, num_guesses):
         lhs_samples[:, i] = np.random.uniform(low, high, num_guesses)
 
     for i in range(num_guesses):
-        np.random.shuffle(lhs_samples[i])  # Shuffle each row for randomness
+        np.random.shuffle(lhs_samples[i])
 
     return lhs_samples.tolist()
 
-
-# Generate initial guesses using Latin Hypercube Sampling
 guesses = latin_hypercube_sampling(bounds, num_guesses)
 
 dictionary = []
