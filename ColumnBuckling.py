@@ -11,4 +11,3 @@ def calculate_column_buckling_stress(length, radius, t_1 , YoungsModulus ):
 
 fuel_tank_1 = PropClass.FuelTank(length=2, radius=1, t_1=3 * 10 ** -3, t_2=4 * 10 ** -3, material='Ti-6AI-4V')
 print(calculate_column_buckling_stress(10, 0.25, 1 * 10 ** -3, fuel_tank_1.YoungsModulus ))
-
