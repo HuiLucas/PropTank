@@ -2,6 +2,7 @@ from scipy.optimize import shgo
 
 import PropClass
 from scipy.optimize import minimize
+from scipy.optimize import differential_evolution
 import InputVariables
 import numpy as np
 import ShellBuckling as sb
@@ -172,6 +173,10 @@ constraints = [
     # Optional Max length{'type': 'ineq', 'fun': constraint_maxlength}
 ]
 
+def objective_with_penalty(variables):
+    penalty = 1000  # Penalty factor
+    return objective_function(variables) + sum([penalty * max(0, constraint['fun'](variables)) ** 2 for constraint in constraints])
+
 guesses= [variables2]
 
 bounds = [(0.0001, 0.1), #t_2
@@ -195,11 +200,13 @@ def latin_hypercube_sampling(bounds, num_guesses):
 
     return lhs_samples.tolist()
 
-guesses = latin_hypercube_sampling(bounds, num_guesses)
+guesses += latin_hypercube_sampling(bounds, num_guesses)
 
+print("test3",objective_with_penalty(variables2))
 dictionary = []
 for guess in guesses:
-    result = minimize(objective_function,bounds=bounds, constraints=constraints, method = "SLSQP", x0 = guess, options = {'disp': True, 'maxiter': 1000}, callback=lambda variables: print(variables))# , jac= lambda variables: np.array([0.00001,0.005,0.01,0.00003, 0])) #minimizer_kwargs={'method': 'SLSQP'})
+    #result = minimize(objective_function,bounds=bounds, constraints=constraints, method = "SLSQP", x0 = guess, options = {'disp': True, 'maxiter': 1000}, callback=lambda variables: print(variables))# , jac= lambda variables: np.array([0.00001,0.005,0.01,0.00003, 0])) #minimizer_kwargs={'method': 'SLSQP'})
+    result = differential_evolution(objective_with_penalty, bounds=bounds)
     if result.success == True and 0.01 <= result.fun <=10000:
         formatted_x = [f"{val:.6f}" for val in result.x]  # Adjust precision as needed
         print(f"Success: {result.success}, Optimized Variables: {formatted_x}")
