@@ -27,7 +27,7 @@ variables2 = [tank_variables.t_2,
 
 print("volume",variables2[2])
 
-num_guesses = 10000  # number of times the optimization runs
+num_guesses = 2000  # number of times the optimization runs
 
 def volume_to_length(variables):
     return (2/3) * variables[1] + variables[2]/(np.pi * variables[1] ** 2)
@@ -235,20 +235,58 @@ print(best_configuration)"""
 #get mass of the tank for the Attachment Configuration and iterate
 
 if best_configuration is not None:
+    def constraint_shell_buckling_sf(variables):
+        poissoin_ratio = tank_variables.PoissonRatio
+        youngs_modulus = tank_variables.YoungsModulus
+        LaunchStress = sc.launch_stress_calculator(variables[1],
+                                                   InputVariables.total_mass_sc - 11.55 + objective_function(variables),
+                                                   variables[3])
+        StressCrit = sb.calculate_shell_buckling(volume_to_length(variables), variables[1], variables[3],
+                                                 poissoin_ratio,
+                                                 constraint_equation_state(variables), youngs_modulus)
+        #  launch load - pressure_longitudinal <= critical stress from shell buckling
+        # if -LaunchStress + StressCrit < 0:
+        # print("violate shell buckle", LaunchStress, StressCrit)
+        return  StressCrit/LaunchStress
+
+
+    def constraint_column_buckling_sf(variables):
+        youngs_modulus = tank_variables.YoungsModulus
+        LaunchStress = sc.launch_stress_calculator(variables[1],
+                                                   InputVariables.total_mass_sc - 11.55 + objective_function(variables),
+                                                   variables[3])
+        PressStress = (constraint_equation_state(variables) * variables[1]) / (variables[3] * 2)
+        StressCrit = cb.calculate_column_buckling_stress(volume_to_length(variables), variables[1], variables[3],
+                                                         youngs_modulus)
+        # launch load - pressure_longitudinal <= critical stress column
+        # if -LaunchStress + PressStress + StressCrit < 0:
+        # print("column buckling no good", LaunchStress - PressStress, StressCrit)
+        return (PressStress + StressCrit) / LaunchStress
+
+    def constraint_hoop_stress_sf(variables):
+        yield_stress = tank_variables.YieldStress * 10 ** 6
+        return yield_stress / ((constraint_equation_state(variables) * variables[1]) / variables[3])
+
+
+    constraint_hoop_stress_sf(dimensions)
+
     dimensions, mass = best_configuration
     print("Best Configuration:")
     print("t_2(mm):", dimensions[0] * 1000)
     print("t_1(mm):", dimensions[3] * 1000)
     print("radius(m):", dimensions[1])
-    print("volume(m):", dimensions[2])
     print("length(m):", volume_to_length(dimensions))
     print("Mass(kg):", mass)
     print("Temperature:", dimensions[4])
     print("Pressure(MPa):", constraint_equation_state(best_configuration[0])/1000000)
     print("Volume(m^3):", constraint_volume(best_configuration[0]))
     print("moles:", InputVariables.n)
-    print("Volume(m^3): ", constraint_volume(best_configuration[0]))
     print("Material :" , tank_variables.material)
     print("Number of sucessfull guesses : " , len(dictionary), "out of " , num_guesses )
+    print("Shell buckling safety factor: ", constraint_shell_buckling_sf(dimensions))
+    print("Column buckling safety factor: ", constraint_column_buckling_sf(dimensions))
+    print("Pressure force safety factor: ", constraint_hoop_stress_sf(dimensions))
+    print("Total spacecraft mass: ", (InputVariables.total_mass_sc - 11.55 + objective_function(dimensions)) * (1 + 0.0000577 * 6 * 9.80665))
+
 else:
     print("No valid configuration found.")
